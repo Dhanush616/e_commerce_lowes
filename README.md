@@ -74,6 +74,41 @@ Express serves the Vite build from `dist/` and the API from the same origin:
 <http://localhost:4000>. Non-API routes fall back to `index.html`, so deep links such as
 `/product/p1` and `/admin` work after a refresh.
 
+## Deployment (Vercel front end + Render API)
+
+The API keeps sessions, carts and the SSE client list in memory, so it needs a **persistent
+Node process**. Serverless functions on Vercel would reset that state between requests and break
+login, cart and live updates. The reliable split is:
+
+| Piece | Host | Why |
+|---|---|---|
+| React build (`dist/`) | Vercel | Static CDN, instant loads |
+| Express API | Render web service | One long-lived process → memory state and SSE work |
+
+### 1. Deploy the API to Render
+
+1. Push this repo to GitHub (already done).
+2. Render dashboard → **New → Blueprint** → pick the repo. `render.yaml` is detected.
+3. Deploy. The service runs `npm ci && npm run build`, then `npm start` on `$PORT`.
+4. Note the URL, e.g. `https://ecommerce-lowes-api.onrender.com`.
+5. Check `https://<your-api>.onrender.com/api/health`.
+
+Optional: set `CLIENT_ORIGIN` (comma-separated) to your exact Vercel URL(s). Without it the API
+allowlists `https://*.vercel.app` and local dev origins.
+
+### 2. Deploy the front end to Vercel
+
+1. Vercel dashboard → **Add New → Project** → import the same repo.
+2. Framework preset: **Vite**. Build `npm run build`, output `dist`.
+3. Environment variable: `VITE_API_URL = https://<your-api>.onrender.com` (no trailing slash).
+4. Deploy. `vercel.json` already rewrites client-side routes to `index.html`.
+
+Redeploy the Vercel project whenever `VITE_API_URL` changes, because Vite inlines it at build
+time.
+
+> Render's free plan spins down after ~15 minutes idle, so the first request can take ~30–50s.
+> In-memory data (new users, carts, orders) resets whenever the API restarts or redeploys.
+
 ### Demo accounts
 
 | Role | Email | Password |

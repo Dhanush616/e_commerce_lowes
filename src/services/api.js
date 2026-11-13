@@ -1,5 +1,11 @@
 const TOKEN_KEY = "fs_token";
 
+/**
+ * Base URL of the Express API. Empty in local dev so Vite's /api proxy is used;
+ * set VITE_API_URL (for example https://my-api.onrender.com) for split hosting.
+ */
+export const API_BASE = (import.meta.env.VITE_API_URL || "").replace(/\/+$/, "");
+
 export class ApiError extends Error {
   constructor(message, status = 0, details = null) {
     super(message);
@@ -47,7 +53,7 @@ export async function api(path, { method = "GET", body, headers = {}, signal } =
 
   let response;
   try {
-    response = await fetch(`/api${path}`, {
+    response = await fetch(`${API_BASE}/api${path}`, {
       method,
       headers: requestHeaders,
       body: body === undefined ? undefined : JSON.stringify(body),

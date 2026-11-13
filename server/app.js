@@ -6,6 +6,7 @@ import { fileURLToPath } from "node:url";
 import { errorHandler, notFound } from "./lib/errors.js";
 import { liveClientCount } from "./lib/sse.js";
 import { attachUser } from "./middleware/auth.js";
+import { cors } from "./middleware/cors.js";
 import { requestLogger } from "./middleware/requestLogger.js";
 
 import adminRoutes from "./routes/admin.js";
@@ -23,6 +24,7 @@ export function createApp({ serveStatic = true } = {}) {
   const app = express();
   app.disable("x-powered-by");
 
+  app.use(cors);
   app.use(requestLogger);
   app.use(express.json({ limit: "100kb" }));
   app.use(attachUser);

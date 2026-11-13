@@ -1,4 +1,5 @@
 import { createContext, useCallback, useContext, useEffect, useMemo, useRef, useState } from "react";
+import { API_BASE } from "../services/api";
 import { formatPrice } from "../utils/calculations";
 
 const LiveUpdatesContext = createContext(null);
@@ -40,7 +41,7 @@ export function LiveUpdatesProvider({ children }) {
   );
 
   useEffect(() => {
-    const source = new EventSource("/api/events");
+    const source = new EventSource(`${API_BASE}/api/events`);
 
     source.onopen = () => setConnected(true);
     source.onerror = () => setConnected(false);
