@@ -3,7 +3,9 @@ services:
     name: ecommerce-lowes-api
     runtime: node
     plan: free
-    buildCommand: npm ci && npm run build
+    # The React build is served by Vercel, so Render only needs the API runtime.
+    # Installing production deps avoids needing Vite/devDependencies during the build.
+    buildCommand: npm ci --omit=dev
     startCommand: npm start
     healthCheckPath: /api/health
     envVars:
