@@ -1,0 +1,353 @@
+/* ------------------------------------------------------------------ *
+ * Feature styles: drag-and-drop, SSE toasts, admin charts and KPIs.
+ * Monochrome edition.
+ * ------------------------------------------------------------------ */
+
+/* ---------- loading / error states ---------- */
+.fs-state {
+  background: transparent;
+  border: 1px solid var(--fs-line);
+  border-radius: 0;
+  box-shadow: none;
+  padding: 3rem 1.5rem;
+}
+
+.fs-product-skeleton-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 8px;
+}
+
+.fs-skeleton-card {
+  min-height: 360px;
+  border-radius: 0;
+  background: linear-gradient(100deg, #e2e2dd 20%, #f3f3ef 40%, #e2e2dd 60%);
+  background-size: 220% 100%;
+  animation: fs-shimmer 1.4s linear infinite;
+}
+
+@keyframes fs-shimmer {
+  to {
+    background-position: -220% 0;
+  }
+}
+
+@media (max-width: 767px) {
+  .fs-product-skeleton-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+/* ---------- drag and drop ---------- */
+.fs-cart-row {
+  position: relative;
+  padding-left: 2.4rem !important;
+  cursor: grab;
+  transition: opacity 0.15s ease, outline-color 0.15s ease;
+}
+
+.fs-cart-row:active {
+  cursor: grabbing;
+}
+
+.fs-drag-handle {
+  position: absolute;
+  left: 0.75rem;
+  top: 50%;
+  transform: translateY(-50%);
+  color: var(--fs-muted);
+  font-size: 1.15rem;
+  letter-spacing: -2px;
+  user-select: none;
+}
+
+.fs-dragging {
+  opacity: 0.4;
+}
+
+.fs-drop-target {
+  outline: 2px solid var(--fs-ink);
+  outline-offset: -2px;
+}
+
+.fs-merch-list {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.fs-merch-item {
+  display: grid;
+  grid-template-columns: 1.1rem 1.5rem 2.4rem minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 0.6rem;
+  padding: 0.45rem 0.6rem;
+  border: 1px solid var(--fs-line);
+  border-radius: 0;
+  background: #fff;
+  cursor: grab;
+}
+
+.fs-merch-item:active {
+  cursor: grabbing;
+}
+
+.fs-merch-item img {
+  width: 2.4rem;
+  height: 2.4rem;
+  object-fit: cover;
+  border-radius: 0;
+  filter: grayscale(1);
+}
+
+.fs-merch-rank {
+  font-weight: 800;
+  color: var(--fs-muted);
+  font-size: 0.7rem;
+  text-align: center;
+}
+
+.fs-merch-name {
+  font-size: 0.72rem;
+  font-weight: 600;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.fs-drag-handle-inline {
+  color: var(--fs-muted);
+  font-size: 1.05rem;
+  user-select: none;
+}
+
+/* ---------- SSE / live indicator ---------- */
+.fs-live {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  padding: 0.4rem 0.7rem;
+  border: 1px solid var(--fs-line);
+  border-radius: 0;
+  background: transparent;
+  color: var(--fs-muted);
+  font-size: 0.55rem;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.fs-live.on {
+  border-color: var(--fs-ink);
+  background: var(--fs-ink);
+  color: #fff;
+}
+
+.fs-live-dot {
+  width: 0.45rem;
+  height: 0.45rem;
+  border-radius: 50%;
+  background: currentColor;
+  box-shadow: 0 0 0 0 currentColor;
+  animation: fs-pulse 1.8s infinite;
+}
+
+@keyframes fs-pulse {
+  0% {
+    box-shadow: 0 0 0 0 rgba(10, 10, 10, 0.4);
+  }
+  70% {
+    box-shadow: 0 0 0 6px rgba(10, 10, 10, 0);
+  }
+  100% {
+    box-shadow: 0 0 0 0 rgba(10, 10, 10, 0);
+  }
+}
+
+/* ---------- toasts ---------- */
+.fs-toasts {
+  position: fixed;
+  right: 1rem;
+  bottom: 1rem;
+  z-index: 200;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  max-width: min(360px, calc(100vw - 2rem));
+}
+
+.fs-toast {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.75rem;
+  padding: 0.8rem 0.95rem;
+  border: 1px solid var(--fs-ink);
+  border-radius: 0;
+  background: var(--fs-ink);
+  color: #fff;
+  font-size: 0.66rem;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  animation: fs-toast-in 0.2s ease;
+}
+
+.fs-toast button {
+  border: 0;
+  background: transparent;
+  color: rgba(255, 255, 255, 0.7);
+  font-size: 1.1rem;
+  line-height: 1;
+  cursor: pointer;
+  margin-left: auto;
+}
+
+.fs-toast-success {
+  background: var(--fs-ink);
+}
+
+.fs-toast-danger {
+  background: var(--fs-danger);
+  border-color: var(--fs-danger);
+}
+
+.fs-toast-info {
+  background: #2c2c29;
+  border-color: #2c2c29;
+}
+
+@keyframes fs-toast-in {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* ---------- admin KPIs + charts ---------- */
+.fs-kpi-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 8px;
+}
+
+.fs-kpi {
+  background: var(--fs-surface);
+  border: 1px solid var(--fs-line);
+  border-radius: 0;
+  padding: 1.1rem;
+  box-shadow: none;
+}
+
+.fs-kpi-value {
+  font-family: var(--fs-display);
+  font-size: clamp(1.3rem, 2.2vw, 1.8rem);
+  font-weight: 800;
+  letter-spacing: -0.03em;
+  line-height: 1.15;
+  margin: 0.25rem 0;
+}
+
+@media (max-width: 991px) {
+  .fs-kpi-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 479px) {
+  .fs-kpi-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.fs-chart {
+  width: 100%;
+  height: auto;
+  display: block;
+}
+
+.fs-chart-grid {
+  stroke: var(--fs-line);
+  stroke-width: 1;
+  stroke-dasharray: 3 4;
+}
+
+.fs-chart-bar {
+  fill: var(--fs-ink);
+}
+
+.fs-chart-line {
+  fill: none;
+  stroke: var(--fs-ink);
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.fs-chart-dot {
+  fill: #fff;
+  stroke: var(--fs-ink);
+  stroke-width: 2;
+}
+
+.fs-chart-tick,
+.fs-chart-label,
+.fs-chart-value {
+  fill: var(--fs-muted);
+  font-family: var(--fs-display);
+  font-size: 10px;
+}
+
+.fs-chart-value {
+  fill: var(--fs-ink);
+  font-weight: 700;
+  font-size: 9px;
+}
+
+.fs-progress {
+  height: 4px;
+  border-radius: 0;
+  background: var(--fs-line);
+  overflow: hidden;
+  margin-top: 0.3rem;
+}
+
+.fs-progress span {
+  display: block;
+  height: 100%;
+  border-radius: 0;
+  background: var(--fs-ink);
+}
+
+/* ---------- order / success ---------- */
+.fs-success-mark {
+  width: 60px;
+  height: 60px;
+  margin: 0 auto;
+  display: grid;
+  place-items: center;
+  border-radius: 0;
+  background: var(--fs-ink);
+  color: #fff;
+  font-size: 1.7rem;
+  font-weight: 800;
+  box-shadow: none;
+}
+
+/* ---------- hide live indicator on narrow screens ---------- */
+@media (max-width: 991px) {
+  .fs-live {
+    display: none;
+  }
+}
+
+/* ---------- form checkbox ---------- */
+input[type="checkbox"] {
+  accent-color: var(--fs-ink);
+  width: 1rem;
+  height: 1rem;
+}
